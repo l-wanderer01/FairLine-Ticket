@@ -1,5 +1,7 @@
 package com.example.SKALA_Mini_Project_1.modules.fanscore;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "ticketing.fan-score.sync.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class FanScoreSyncScheduler {
 

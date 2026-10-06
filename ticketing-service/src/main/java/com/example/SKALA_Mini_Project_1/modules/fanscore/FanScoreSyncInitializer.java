@@ -1,5 +1,7 @@
 package com.example.SKALA_Mini_Project_1.modules.fanscore;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.dao.DataAccessException;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "ticketing.fan-score.sync.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class FanScoreSyncInitializer implements ApplicationRunner {
 

@@ -1,5 +1,7 @@
 package com.example.SKALA_Mini_Project_1.kafka;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.example.SKALA_Mini_Project_1.modules.events.service.TicketingInboxEventService;
 import com.example.SKALA_Mini_Project_1.modules.finalization.dto.InternalBookingCancelRequest;
 import com.example.SKALA_Mini_Project_1.modules.finalization.dto.InternalBookingConfirmRequest;
@@ -17,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 @Component
+@ConditionalOnProperty(name = "ticketing.kafka.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentEventConsumer {
