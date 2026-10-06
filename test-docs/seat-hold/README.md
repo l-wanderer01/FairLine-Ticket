@@ -12,6 +12,7 @@
 2. [환경 및 데이터 준비](02-environment-and-data.md): 독립된 환경과 반복 가능한 데이터 준비.
 3. [테스트 케이스](03-test-cases.md): 사전 조건, 절차, 기대 결과를 케이스 ID로 관리.
 4. [실행 시나리오](04-execution-scenarios.md): 순서, 경쟁 제어, 상태 검증에 따라 실행.
+   기본 6개 케이스는 [사용자 수동 smoke](05-manual-smoke.md)와 [전용 결과 양식](results/MANUAL-SMOKE-TEMPLATE.md)으로 두 번 반복한다.
 5. [결과 기록 양식](results/TEMPLATE.md): 실행별 복사하여 증거·결함·재검증 기록.
 
 첫 실행은 SC-01 → SC-02 → SC-03 → SC-04 순서로 진행한다. 환경 의존성이 준비되지 않은 시나리오는 BLOCKED로 남기고 준비된 테스트를 계속한다. 성능 측정은 정합성 검증 이후 진행한다.
@@ -42,6 +43,7 @@
 - [이슈 #3 스키마 및 fixture 검증 결과](results/issue-3.md)
 - [JWT·API 요청·관찰·reset 도구 (#4)](../../test-infra/seat-hold/tools/README.md)
 - [이슈 #4 도구 검증 결과](results/issue-4.md)
+- [이슈 #5 수동 절차 준비 결과](results/issue-5.md)
 
 이슈 #1에서 Redis·PostgreSQL만 연결한 기동과 설정 격리 테스트를 검증했다.
 위 테스트 설계 문서의 fixture 기반 API 시나리오는 아직 실행하지 않았으며 NOT_RUN을 유지한다.
