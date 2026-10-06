@@ -117,7 +117,11 @@ def observe(args):
     result = {"at": dt.datetime.now(dt.timezone.utc).isoformat(), "seats": {}}
     for seat in args.seats:
         key = f"seat:{prefix}:seatId:{seat}"
-        result["seats"][seat] = {"owner": redis("GET", key), "pttl": int(redis("PTTL", key))}
+        owner = redis("GET", key)
+        started = dt.datetime.now(dt.timezone.utc).isoformat()
+        pttl = int(redis("PTTL", key))
+        result["seats"][seat] = {"owner": owner, "pttl": pttl, "pttlStartedAt": started,
+                                 "pttlFinishedAt": dt.datetime.now(dt.timezone.utc).isoformat()}
     result["holds"] = redis("SMEMBERS", f"seat:user:holds:{prefix}:user:{args.user}").splitlines()
     result["access"] = redis("GET", f"seat:access:user:{args.user}:{prefix}")
     result["accessBySchedule"] = redis("GET", f"seat:access:user:{args.user}:schedule:{args.schedule}")

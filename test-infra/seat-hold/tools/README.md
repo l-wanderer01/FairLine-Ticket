@@ -55,7 +55,8 @@ seat-test 범위 밖이므로 DB 관찰로 대체한다. 외부 클라이언트�
 요청 출력은 UTC 시작/종료, 사용자, action, body, HTTP와 응답이다. 예상 4xx도 결과로 출력한다.
 프로세스 종료 코드 0만으로 PASS를 판정하지 말고 HTTP/업무 응답과 before/after를 함께 확인한다.
 `observe`는 owner/PTTL/holds/access/accessBySchedule/accessIndex/active와 DB now,
-좌석/예약/항목 및 활성 중복 예약 조회를 출력한다. 없음은 GET 빈 문자열, PTTL -2이며
+좌석/예약/항목 및 활성 중복 예약 조회를 출력한다. 좌석별 PTTL 측정 시작/종료 시각도 기록한다.
+없음은 GET 빈 문자열, PTTL -2이며
 active 키 없음은 논리적으로 0이다. snapshot 여러 명령은 한 시점의 원자적 관측이 아니다.
 
 ```bash
