@@ -34,13 +34,15 @@ JWT는 UTF-8 32바이트 이상으로 설정한다. 포트를 변경하면 curl 
 정합성 스케줄러, 외부 사용자/공연 HTTP 호출과 tracing export는 비활성이다.
 상세 범위는 [단독 실행 의존성](../../test-docs/seat-hold/01-standalone-dependencies.md)을 참고한다.
 
-## SQL 준비 전: 기동만 검증
+## SQL/fixture 확인
 
-현재 `sql/`은 비어 있다. PostgreSQL은 `seat_test` DB만 생성하고 Hibernate는
-`ddl-auto=none`, Spring SQL 초기화는 `never`다. 빈 DB에서도 서비스는 기동할 수 있다.
-readiness는 애플리케이션 상태와 실제 DB/Redis 연결을 확인한다.
-UP은 업무 스키마/fixture 또는 좌석 API 통과를 의미하지 않는다.
-좌석·예약 시나리오는 이슈 #3 SQL 및 #4 요청 도구 준비 전까지 NOT_RUN/BLOCKED다.
+이슈 #3에서 [공통 SQL과 ID 계약](sql/README.md)을 추가했다. 새 PostgreSQL 볼륨에
+스키마/fixture를 초기화하고 Compose는 `ddl-auto=validate`로 엔티티 호환성을 확인한다.
+Hibernate가 테이블을 생성하지 않으며 Spring SQL 초기화는 `never`다.
+readiness는 앱·DB·Redis 연결 상태다. UP만으로 fixture 상태나 좌석 API 정합성을 판정하지 않는다.
+이슈 #2 시점의 SQL 없는 기동 검증은 [당시 결과](../../test-docs/seat-hold/results/issue-2.md)에 남겨 두었다.
+일반 `seat-test` 프로필 자체는 `ddl-auto=none`이므로 빈 DB 기동은 가능하지만,
+현재 Compose는 SQL이 없거나 이전 빈 볼륨이면 validation 오류로 기동하지 않는다.
 
 ```bash
 docker compose exec -T redis redis-cli ping
@@ -51,13 +53,13 @@ curl -i http://127.0.0.1:28084/api/seats/holds
 Redis PONG, DB accepting connections, readiness HTTP 200/UP을 확인한다.
 JWT 없는 좌석 요청은 HTTP 401이어야 한다. 인증 우회나 테스트 JWT 발급은 이 Compose의 역할이 아니다.
 
-## 이슈 #3 fixture 준비 후: API 검증
+## 최초 초기화 및 반복 실행
 
 공통 SQL의 계약 경로는 `test-infra/seat-hold/sql/01-schema.sql`과 `02-fixture.sql`이다.
 Compose는 이 디렉토리를 `/docker-entrypoint-initdb.d`에 읽기 전용 mount한다.
 PostgreSQL entrypoint가 새 DB 볼륨에서 파일명 순서로 실행한다. 스키마/FK/ID 계약은
 [환경 및 데이터 준비](../../test-docs/seat-hold/02-environment-and-data.md)에 따른다.
-이번 이슈에서는 임시 SQL이나 가짜 fixture를 만들지 않는다.
+공통 SQL은 Compose와 자동 회귀 테스트에서 함께 사용한다.
 
 SQL을 추가해도 기존 볼륨에는 자동 재실행되지 않는다. 실패 증거를 보관한 뒤,
 이 테스트 프로젝트의 데이터를 버려도 될 때만 다음 명령으로 DB와 Redis를 함께 재생성한다.

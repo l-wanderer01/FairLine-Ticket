@@ -11,7 +11,7 @@ services:
       - "127.0.0.1:${SEAT_TEST_POSTGRES_PORT:-15432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      # Issue #3 adds 01-schema.sql and 02-fixture.sql here. Empty until then.
+      # Fresh volumes execute 01-schema.sql then 02-fixture.sql.
       - ./sql:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
@@ -39,6 +39,7 @@ services:
       dockerfile: ticketing-service/Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: seat-test
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SERVER_PORT: 8080
       DB_URL: jdbc:postgresql://postgres:5432/seat_test?currentSchema=ticketing,concert,queue,auth,public
       DB_USER: ${SEAT_TEST_DB_USER:-seat_test}

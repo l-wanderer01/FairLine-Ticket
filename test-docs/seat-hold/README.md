@@ -38,6 +38,8 @@
 - [이슈 #1 작업 및 실행 결과](results/issue-1.md)
 - [좌석 수동 검증용 Compose (#2)](../../test-infra/seat-hold/README.md)
 - [이슈 #2 구성 및 실행 결과](results/issue-2.md)
+- [공통 SQL과 실제 fixture ID (#3)](../../test-infra/seat-hold/sql/README.md)
+- [이슈 #3 스키마 및 fixture 검증 결과](results/issue-3.md)
 
 이슈 #1에서 Redis·PostgreSQL만 연결한 기동과 설정 격리 테스트를 검증했다.
 위 테스트 설계 문서의 fixture 기반 API 시나리오는 아직 실행하지 않았으며 NOT_RUN을 유지한다.
