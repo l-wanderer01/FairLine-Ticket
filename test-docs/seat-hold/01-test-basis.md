@@ -51,4 +51,4 @@ INV-06의 HOLDING 유효 기준은 DB 기준 시각에서 `expires_at > now`다.
 
 ## 기존 테스트와 준비 공백
 
-RedisLockRepositoryTest는 Mockito 기반 stale 참조 정리 2건이며 Lua·TTL·경쟁을 실행하지 않는다. ticketing-service의 기존 테스트는 팬 점수 테스트이며 좌석/예약/확정 테스트는 확인되지 않았다. README의 stress_test 디렉토리와 Compose의 infra/postgres/init.sql은 현재 체크아웃에 없다. 자동화·초기화 파일은 앞으로 준비해야 하며 이 문서에 포함되어 있다고 가정하지 않는다.
+RedisLockRepositoryTest의 Mockito 테스트 2건은 그대로 유지한다. 실제 Lua·TTL·경쟁·예약 native query와 늦은 확정은 [Testcontainers 회귀](06-testcontainers.md)에 추가했다. 공통 초기화 SQL은 `test-infra/seat-hold/sql/`에서 Compose와 자동 테스트가 함께 사용한다. 실제 판정은 [#6 결과](results/issue-6.md)를 따른다. 사용자 수동 smoke와 자동화하지 않은 장애·다중 인스턴스·성능 케이스는 별도 실행이 필요하다.
