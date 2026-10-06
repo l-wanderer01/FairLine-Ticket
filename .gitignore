@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+/dist
+/pkg
+
+# Environment variables (MUST BE IGNORED)
+.env
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor/IDE specific
+.vscode/*
+!.vscode/extensions.json
+
+# Java & Gradle
+bin/
+build/
+.gradle/
+out/
+
+# Spring Boot sensitive files
+src/main/resources/application-local.properties
+src/main/resources/application-local.yml
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# Database / Local logs
+*.log
+*.sql
+# 만약 DB 덤프 파일을 로컬에서 관리한다면 아래의 내용 제외
+/db_dumps/
+
+# Local docs/papers
+/paper/
+
+# Kubernetes local secrets
+/k8s/base/secret.yaml
+/backend/src/main/java/com/example/SKALA_Mini_Project_1/modules/payments/paper/
+
+
+# Test Code
+/stress_test

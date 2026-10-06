@@ -1,0 +1,33 @@
+{
+  "name": "ticketing-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "lint": "eslint . --ext .js,.ts",
+    "preview": "npx vite preview"
+  },
+  "dependencies": {
+    "@tosspayments/payment-sdk": "^1.9.2",
+    "@tosspayments/payment-widget-sdk": "^0.12.1",
+    "@tosspayments/tosspayments-sdk": "^2.5.0",
+    "lucide-vue-next": "^0.522.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "latest",
+    "eslint": "^8.50.0",
+    "postcss": "latest",
+    "tailwindcss": "3.4.17",
+    "typescript": "^5.5.4",
+    "vite": "^5.2.0",
+    "vue-tsc": "^2.1.10"
+  }
+}

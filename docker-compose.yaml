@@ -1,0 +1,299 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: skala-postgres
+    restart: unless-stopped
+    command: >
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=10
+      -c max_wal_senders=10
+      -c hba_file=/etc/postgresql/pg_hba.conf
+      -c max_connections=200
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: concert
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./infra/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7
+    container_name: skala-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  user-auth-service:
+    image: team4-user-auth-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: user-auth-service/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=auth,queue,concert,ticketing,payment,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      USER_AUTH_INTERNAL_API_TOKEN: ${USER_AUTH_INTERNAL_API_TOKEN}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-no-reply@example.com}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-Fairline Ticket Team}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "18081:8080"
+
+  concert-service:
+    image: team4-concert-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: concert-service/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=concert,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      CONCERT_INTERNAL_API_TOKEN: ${CONCERT_INTERNAL_API_TOKEN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "18082:8080"
+
+  queue-service:
+    image: team4-queue-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: queue-service/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=queue,concert,ticketing,payment,auth,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      USER_AUTH_SERVICE_BASE_URL: http://user-auth-service:8080
+      CONCERT_SERVICE_BASE_URL: http://concert-service:8080
+      USER_AUTH_INTERNAL_API_TOKEN: ${USER_AUTH_INTERNAL_API_TOKEN}
+      CONCERT_INTERNAL_API_TOKEN: ${CONCERT_INTERNAL_API_TOKEN}
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "18083:8080"
+
+  ticketing-service:
+    image: team4-ticketing-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ticketing-service/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=ticketing,concert,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      USER_AUTH_SERVICE_BASE_URL: http://user-auth-service:8080
+      CONCERT_SERVICE_BASE_URL: http://concert-service:8080
+      USER_AUTH_INTERNAL_API_TOKEN: ${USER_AUTH_INTERNAL_API_TOKEN}
+      CONCERT_INTERNAL_API_TOKEN: ${CONCERT_INTERNAL_API_TOKEN}
+      TICKETING_INTERNAL_API_TOKEN: ${TICKETING_INTERNAL_API_TOKEN}
+      TICKETING_FAN_SCORE_SYNC_FIXED_DELAY_MS: 60000
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user-auth-service:
+        condition: service_started
+      concert-service:
+        condition: service_started
+    ports:
+      - "18084:8080"
+
+  payment-service:
+    image: team4-payment-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=payment,ticketing,concert,queue,auth,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
+      TOSS_API_BASE: ${TOSS_API_BASE:-https://api.tosspayments.com}
+      TOSS_CONFIRM_URL: ${TOSS_CONFIRM_URL:-https://api.tosspayments.com/v1/payments/confirm}
+      TOSS_CANCEL_BASE_URL: ${TOSS_CANCEL_BASE_URL:-https://api.tosspayments.com/v1/payments}
+      TICKETING_SERVICE_BASE_URL: http://ticketing-service:8080
+      TICKETING_INTERNAL_API_TOKEN: ${TICKETING_INTERNAL_API_TOKEN}
+      PAYMENT_SUCCESS_REDIRECT_URL: ${PAYMENT_SUCCESS_REDIRECT_URL:-http://localhost:5173/payments/success}
+      PAYMENT_FAIL_REDIRECT_URL: ${PAYMENT_FAIL_REDIRECT_URL:-http://localhost:5173/payments/fail}
+      PAYMENT_OPS_API_TOKEN: ${PAYMENT_OPS_API_TOKEN}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "18085:8080"
+
+  frontend:
+    image: team4-frontend
+    restart: unless-stopped
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_USER_AUTH_API_URL: http://user-auth-service:8080
+      VITE_CONCERT_API_URL: http://concert-service:8080
+      VITE_QUEUE_API_URL: http://queue-service:8080
+      VITE_TICKETING_API_URL: http://ticketing-service:8080
+      VITE_PAYMENT_API_URL: http://payment-service:8080
+      VITE_TOSS_CLIENT_KEY: ${VITE_TOSS_CLIENT_KEY:-}
+    depends_on:
+      - user-auth-service
+      - concert-service
+      - queue-service
+      - ticketing-service
+      - payment-service
+    ports:
+      - "5173:5173"
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: skala-kafka
+    hostname: kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  kafka-connect:
+    image: debezium/connect:2.7.3.Final
+    container_name: skala-kafka-connect
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: debezium-connect-group
+      CONFIG_STORAGE_TOPIC: _debezium_configs
+      OFFSET_STORAGE_TOPIC: _debezium_offsets
+      STATUS_STORAGE_TOPIC: _debezium_status
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8083/connectors || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  incident-detector:
+    image: team4-incident-detector
+    build:
+      context: .
+      dockerfile: incident-detector/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=incident,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    ports:
+      - "18086:18086"
+
+  incident-agent:
+    image: team4-incident-agent
+    build:
+      context: .
+      dockerfile: incident-agent/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=incident,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+    ports:
+      - "18087:18087"
+
+  incident-api:
+    image: team4-incident-api
+    build:
+      context: .
+      dockerfile: incident-api/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/concert?currentSchema=incident,public
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - postgres
+    ports:
+      - "18088:18088"
+
+volumes:
+  postgres-data:
+  kafka-data:

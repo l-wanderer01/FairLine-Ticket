@@ -1,0 +1,11 @@
+rootProject.name = 'skala-mini-project-2'
+
+include 'shared-kernel'
+include 'user-auth-service'
+include 'concert-service'
+include 'queue-service'
+include 'ticketing-service'
+include 'payment-service'
+include 'incident-detector'
+include 'incident-agent'
+include 'incident-api'

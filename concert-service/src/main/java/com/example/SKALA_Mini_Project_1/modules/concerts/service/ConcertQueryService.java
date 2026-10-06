@@ -1,0 +1,34 @@
+package com.example.SKALA_Mini_Project_1.modules.concerts.service;
+
+import com.example.SKALA_Mini_Project_1.modules.concerts.dto.ConcertResponse;
+import com.example.SKALA_Mini_Project_1.modules.concerts.repository.ConcertQueryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ConcertQueryService {
+
+    private final ConcertQueryRepository concertQueryRepository;
+
+    @Cacheable(value = "concerts", key = "'all'")
+    public List<ConcertResponse> getVisibleConcerts() {
+        return concertQueryRepository.findVisibleConcerts();
+    }
+
+    @Cacheable(value = "concerts", key = "#concertId")
+    public ConcertResponse getVisibleConcertById(Long concertId) {
+        return concertQueryRepository.findVisibleConcertById(concertId);
+    }
+
+    public boolean existsScheduleForConcert(Long concertId, Long scheduleId) {
+        return concertQueryRepository.existsScheduleForConcert(concertId, scheduleId);
+    }
+
+    public Long getArtistIdByConcertId(Long concertId) {
+        return concertQueryRepository.findArtistIdByConcertId(concertId);
+    }
+}
