@@ -14,6 +14,9 @@ public class ConcertServiceClient {
 
     private static final String INTERNAL_API_HEADER_NAME = "X-Internal-Api-Key";
 
+    @Value("${ticketing.external-clients.enabled:true}")
+    private boolean externalCallsEnabled = true;
+
     private final RestClient restClient;
 
     public ConcertServiceClient(
@@ -28,6 +31,7 @@ public class ConcertServiceClient {
     }
 
     public Long getArtistIdForConcert(Long concertId) {
+        requireExternalCallsEnabled();
         try {
             return restClient.get()
                     .uri("/internal/concerts/{concertId}/artist-id", concertId)
@@ -51,6 +55,12 @@ public class ConcertServiceClient {
             throw new FanScoreSyncException("concert-service 응답을 확인할 수 없습니다.", e);
         } catch (RestClientException e) {
             throw new FanScoreSyncException("concert-service 연결에 실패했습니다.", e);
+        }
+    }
+
+    private void requireExternalCallsEnabled() {
+        if (!externalCallsEnabled) {
+            throw new IllegalStateException("External service calls are disabled; this operation is outside the seat-test scope.");
         }
     }
 }

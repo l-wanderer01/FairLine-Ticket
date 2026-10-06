@@ -50,3 +50,9 @@ ticketing-service/
 - 예약 생성과 조회는 `modules/bookings/`
 - 결제 이후 상태 전이는 `modules/finalization/`
 - 이벤트 기반 운영 보강은 `modules/events/`, `modules/reconciliation/`
+
+
+## 좌석 테스트용 단독 실행
+
+Redis·PostgreSQL만 사용하는 `seat-test` 프로필과 기능별 검증 한계는
+[단독 실행 의존성 안내](../test-docs/seat-hold/01-standalone-dependencies.md)를 참고하세요.

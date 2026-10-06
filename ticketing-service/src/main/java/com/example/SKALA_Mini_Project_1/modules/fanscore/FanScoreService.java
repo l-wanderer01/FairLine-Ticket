@@ -9,6 +9,7 @@ import com.example.SKALA_Mini_Project_1.integration.concert.ConcertServiceClient
 import com.example.SKALA_Mini_Project_1.integration.userauth.UserAuthClient;
 import com.example.SKALA_Mini_Project_1.modules.bookings.repository.BookingRepository;
 import com.example.SKALA_Mini_Project_1.modules.fanscore.exception.FanScoreSyncException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class FanScoreService {
 
+    @Value("${ticketing.fan-score.sync.enabled:true}")
+    private boolean syncEnabled = true;
+
     private final BookingRepository bookingRepository;
     private final FanScoreQueryRepository fanScoreQueryRepository;
     private final ConcertServiceClient concertServiceClient;
@@ -29,6 +33,9 @@ public class FanScoreService {
 
     @Transactional
     public void applyConfirmedBookingScore(UUID bookingId, Long userId) {
+        if (!syncEnabled) {
+            return;
+        }
         fanScoreMetrics.observe(
                 "fairline.fan_score.sync.single",
                 "fanScoreService#applyConfirmedBookingScore",
@@ -58,6 +65,9 @@ public class FanScoreService {
 
     @Transactional
     public int syncArtistFanScoresFromConfirmedBookings() {
+        if (!syncEnabled) {
+            return 0;
+        }
         return fanScoreMetrics.observe(
                 "fairline.fan_score.sync.batch",
                 "fanScoreService#syncArtistFanScoresFromConfirmedBookings",
