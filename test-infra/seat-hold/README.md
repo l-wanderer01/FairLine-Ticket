@@ -17,6 +17,9 @@ JDK 21 빌드에 Gradle 설정, `shared-kernel`, 티켓팅 소스를 포함한�
 ```bash
 cd test-infra/seat-hold
 cp .env.example .env
+# Restrictive checkout umask environments: PostgreSQL must be able to read public SQL.
+chmod a+rX sql
+chmod a+r sql/*.sql
 docker compose config --quiet
 docker compose build ticketing-service
 docker compose up -d --wait --wait-timeout 180
@@ -77,6 +80,8 @@ SQL 초기화 성공, 실제 테이블과 fixture ID·초기 Redis 상태를 확
 SQL 오류나 업무 테이블 누락은 health UP과 별개로 실패/차단 사유다.
 
 ## 종료 및 문제 확인
+
+API 요청·JWT·상태 조회·증거 보존 및 반복 reset은 [요청/관찰 도구](tools/README.md)를 따른다.
 
 ```bash
 docker compose logs --tail=100 ticketing-service postgres redis
