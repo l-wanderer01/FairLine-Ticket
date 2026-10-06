@@ -36,8 +36,10 @@
 
 - [티켓팅 단독 실행 의존성과 검증 범위 (#1)](01-standalone-dependencies.md)
 - [이슈 #1 작업 및 실행 결과](results/issue-1.md)
+- [좌석 수동 검증용 Compose (#2)](../../test-infra/seat-hold/README.md)
+- [이슈 #2 구성 및 실행 결과](results/issue-2.md)
 
 이슈 #1에서 Redis·PostgreSQL만 연결한 기동과 설정 격리 테스트를 검증했다.
 위 테스트 설계 문서의 fixture 기반 API 시나리오는 아직 실행하지 않았으며 NOT_RUN을 유지한다.
-Compose(#2), 공통 스키마/fixture(#3), 요청·관찰 도구(#4), 사용자 수동 실행(#5),
+Compose(#2)는 위 독립 환경 안내를 따르며, 공통 스키마/fixture(#3), 요청·관찰 도구(#4), 사용자 수동 실행(#5),
 Testcontainers 회귀(#6)는 후속 이슈에서 진행한다.

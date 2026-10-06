@@ -5,8 +5,8 @@
 - [ ] 코드 커밋, JDK 21, Gradle, Redis/PostgreSQL 버전 기록.
 - [ ] 테스트 전용 Redis와 PostgreSQL 사용. 운영 데이터·서비스와 연결하지 않음.
 - [ ] 스키마 및 데이터 초기화 스크립트 준비. 현재 Compose의 init.sql은 누락되어 있음.
-- [ ] test 프로필 준비: DB/Redis 주소, 테스트 JWT·내부 API 토큰, 외부 의존성 설정.
-- [ ] 스케줄러·Kafka 리스너가 테스트 데이터를 바꾸지 않도록 1차에서 격리. 비활성화 방법 또는 대체 구성은 구현 후 기록.
+- [x] `seat-test` 프로필 및 [독립 Compose](../../test-infra/seat-hold/README.md): DB/Redis 주소, 테스트 JWT·내부 API 토큰, 외부 의존성 설정.
+- [x] 스케줄러·Kafka 리스너 격리: [단독 실행 의존성](01-standalone-dependencies.md)의 비활성화 설정 적용.
 - [ ] 실제 Redis Lua와 PostgreSQL 네이티브 쿼리를 실행하는 통합 테스트 구성. Testcontainers 권장, 현재 추가되어 있지 않음.
 - [ ] 동시 시작 barrier와 서비스 내부 중단 지점/latch 또는 장애 프록시 준비.
 - [ ] DB 실제 제약조건·인덱스 확인. 엔티티 선언만으로 중복 방지 여부 단정하지 않음.

@@ -40,6 +40,8 @@ desktop.ini
 # Database / Local logs
 *.log
 *.sql
+# Shared seat-test schema/fixtures (issue #3), never production dumps.
+!/test-infra/seat-hold/sql/*.sql
 # 만약 DB 덤프 파일을 로컬에서 관리한다면 아래의 내용 제외
 /db_dumps/
 
