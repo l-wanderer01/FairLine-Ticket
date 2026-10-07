@@ -1,0 +1,23 @@
+plugins { id 'java-library' }
+
+dependencies {
+    implementation 'org.springframework:spring-jdbc'
+    implementation 'com.zaxxer:HikariCP'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation project(':shared-kernel')
+}
+
+test { exclude '**/StorageComparisonTest.class' }
+
+tasks.register('storageComparison', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    include '**/StorageComparisonTest.class'
+    // Integration tests intentionally fail if real stores are unavailable.
+    environment 'COMPARISON_REDIS_PORT', System.getenv('COMPARISON_REDIS_PORT') ?: '16379'
+    environment 'COMPARISON_DB_URL', System.getenv('COMPARISON_DB_URL') ?: 'jdbc:postgresql://localhost:15432/comparison'
+    environment 'COMPARISON_DB_USER', System.getenv('COMPARISON_DB_USER') ?: 'comparison'
+    environment 'COMPARISON_DB_PASSWORD', System.getenv('COMPARISON_DB_PASSWORD') ?: 'comparison'
+    outputs.upToDateWhen { false }
+    testLogging { events 'passed', 'failed'; showStandardStreams = true }
+}

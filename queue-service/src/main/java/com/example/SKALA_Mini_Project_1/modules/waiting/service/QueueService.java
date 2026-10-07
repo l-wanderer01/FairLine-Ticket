@@ -1,6 +1,7 @@
 package com.example.SKALA_Mini_Project_1.modules.waiting.service;
 
 import com.example.SKALA_Mini_Project_1.global.redis.RedisKeyGenerator;
+import com.example.SKALA_Mini_Project_1.global.redis.RedisQueueAdmission;
 import com.example.SKALA_Mini_Project_1.integration.concert.ConcertServiceClient;
 import com.example.SKALA_Mini_Project_1.integration.userauth.UserAuthClient;
 import com.example.SKALA_Mini_Project_1.modules.waiting.config.QueueRuntimeProperties;
@@ -11,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -27,44 +26,6 @@ public class QueueService {
     private static final Duration QUEUE_HEARTBEAT_TTL = Duration.ofMinutes(10);
     private static final Duration ENTRY_TOKEN_TTL = Duration.ofSeconds(180);
     private static final Duration SCHEDULE_VALIDATE_CACHE_TTL = Duration.ofMinutes(10);
-    private static final String ADMIT_AND_ISSUE_TOKEN_SCRIPT = """
-            local rank = redis.call('ZRANK', KEYS[1], ARGV[1])
-            if not rank then
-                return nil
-            end
-
-            local active = tonumber(redis.call('GET', KEYS[2]) or '0')
-            local capacity = tonumber(ARGV[2])
-            if not capacity then
-                return nil
-            end
-
-            local available = capacity - active
-            if available <= 0 then
-                return nil
-            end
-
-            if rank < available then
-                local removed = redis.call('ZREM', KEYS[1], ARGV[1])
-                if removed == 1 then
-                    redis.call('INCR', KEYS[2])
-                    redis.call('SET', KEYS[3], ARGV[3], 'PX', ARGV[4])
-                    return ARGV[5]
-                end
-            end
-
-            return nil
-            """;
-
-    private static final String CONSUME_ENTRY_TOKEN_SCRIPT = """
-            local value = redis.call('GET', KEYS[1])
-            if not value then
-                return nil
-            end
-            redis.call('DEL', KEYS[1])
-            return value
-            """;
-
     private final RedisTemplate<String, String> redisTemplate;
     private final UserAuthClient userAuthClient;
     private final ConcertServiceClient concertServiceClient;
@@ -171,14 +132,9 @@ public class QueueService {
             return null;
         }
 
-        DefaultRedisScript<String> script = new DefaultRedisScript<>();
-        script.setScriptText(CONSUME_ENTRY_TOKEN_SCRIPT);
-        script.setResultType(String.class);
-
-        String entryTokenKey = RedisKeyGenerator.seatEntryKey(entryToken);
         try {
             return runWithRedisRetry(() ->
-                    redisTemplate.execute(script, List.of(entryTokenKey))
+                    RedisQueueAdmission.consume(redisTemplate, entryToken)
             );
         } catch (RuntimeException e) {
             if (isRedisFailure(e)) {
@@ -212,27 +168,10 @@ public class QueueService {
     }
 
     private String tryAdmitAndIssueEntryToken(Long concertId, Long scheduleId, Long userId) {
-        String userKey = String.valueOf(userId);
-        String queueKey = getQueueKey(concertId, scheduleId);
-        String activeKey = getActiveKey(concertId, scheduleId);
-
         String entryToken = UUID.randomUUID().toString();
-        String entryTokenKey = RedisKeyGenerator.seatEntryKey(entryToken);
-        String payload = userId + ":" + concertId + ":" + scheduleId;
-
-        DefaultRedisScript<String> script = new DefaultRedisScript<>();
-        script.setScriptText(ADMIT_AND_ISSUE_TOKEN_SCRIPT);
-        script.setResultType(String.class);
-
-        return runWithRedisRetry(() -> redisTemplate.execute(
-                script,
-                List.of(queueKey, activeKey, entryTokenKey),
-                userKey,
-                String.valueOf(queueRuntimeProperties.getMaxSeatCapacity()),
-                payload,
-                String.valueOf(ENTRY_TOKEN_TTL.toMillis()),
-                entryToken
-        ));
+        return runWithRedisRetry(() -> RedisQueueAdmission.admit(
+                redisTemplate, concertId, scheduleId, String.valueOf(userId),
+                queueRuntimeProperties.getMaxSeatCapacity(), entryToken, ENTRY_TOKEN_TTL));
     }
 
     private void validateScheduleBelongsToConcert(Long concertId, Long scheduleId) {

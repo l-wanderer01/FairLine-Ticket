@@ -9,3 +9,5 @@ include 'payment-service'
 include 'incident-detector'
 include 'incident-agent'
 include 'incident-api'
+
+include 'storage-comparison'
