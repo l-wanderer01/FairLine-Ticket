@@ -55,3 +55,5 @@ desktop.ini
 
 # Test Code
 /stress_test
+# Schema required by the storage comparison module
+!storage-comparison/src/main/resources/schema.sql
