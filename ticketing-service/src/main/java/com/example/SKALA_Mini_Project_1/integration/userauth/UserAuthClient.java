@@ -16,6 +16,9 @@ public class UserAuthClient {
 
     private static final String INTERNAL_API_HEADER_NAME = "X-Internal-Api-Key";
 
+    @Value("${ticketing.external-clients.enabled:true}")
+    private boolean externalCallsEnabled = true;
+
     private final RestClient restClient;
 
     public UserAuthClient(
@@ -30,6 +33,7 @@ public class UserAuthClient {
     }
 
     public InternalUserProfileResponse getUserProfile(Long userId) {
+        requireExternalCallsEnabled();
         try {
             InternalUserProfileResponse response = restClient.get()
                     .uri("/internal/users/{userId}", userId)
@@ -54,6 +58,7 @@ public class UserAuthClient {
             Long artistId,
             OffsetDateTime occurredAt
     ) {
+        requireExternalCallsEnabled();
         try {
             restClient.post()
                     .uri("/internal/fan-scores/events/attendance-confirmed")
@@ -67,6 +72,12 @@ public class UserAuthClient {
             throw new FanScoreSyncException("user-auth-service Fan Score 반영에 실패했습니다.", e);
         } catch (RestClientException e) {
             throw new FanScoreSyncException("user-auth-service 연결에 실패했습니다.", e);
+        }
+    }
+
+    private void requireExternalCallsEnabled() {
+        if (!externalCallsEnabled) {
+            throw new IllegalStateException("External service calls are disabled; this operation is outside the seat-test scope.");
         }
     }
 }

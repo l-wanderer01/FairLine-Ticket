@@ -2,7 +2,7 @@
 
 작성일: 2026-10-06 (Asia/Seoul)  
 코드 분석 기준: `9b048e80d2eebd2a254044c50429578bd2405b4a`  
-상태: 테스트 설계 초안 / 실행 전
+상태: 공통 환경·도구·자동 회귀 준비 완료 / 사용자 수동 smoke 실행 전
 
 좌석 선점 → 예약 생성 → 확정·취소·만료 흐름의 정합성을 검증하기 위한 문서다. 테스트 결과와 코드 분석상 위험을 구분하며, 실행하지 않은 케이스는 통과로 기록하지 않는다.
 
@@ -12,6 +12,7 @@
 2. [환경 및 데이터 준비](02-environment-and-data.md): 독립된 환경과 반복 가능한 데이터 준비.
 3. [테스트 케이스](03-test-cases.md): 사전 조건, 절차, 기대 결과를 케이스 ID로 관리.
 4. [실행 시나리오](04-execution-scenarios.md): 순서, 경쟁 제어, 상태 검증에 따라 실행.
+   기본 6개 케이스는 [사용자 수동 smoke](05-manual-smoke.md)와 [전용 결과 양식](results/MANUAL-SMOKE-TEMPLATE.md)으로 두 번 반복한다.
 5. [결과 기록 양식](results/TEMPLATE.md): 실행별 복사하여 증거·결함·재검증 기록.
 
 첫 실행은 SC-01 → SC-02 → SC-03 → SC-04 순서로 진행한다. 환경 의존성이 준비되지 않은 시나리오는 BLOCKED로 남기고 준비된 테스트를 계속한다. 성능 측정은 정합성 검증 이후 진행한다.
@@ -31,3 +32,21 @@
 ## 관리 규칙
 
 케이스 ID는 삭제하거나 재사용하지 않는다. 정책·코드가 바뀌면 관련 케이스와 시나리오를 함께 갱신한다. 결과 파일은 `results/YYYY-MM-DD-run-NN.md`로 저장하고 코드 커밋·환경·데이터 버전을 기록한다. 애플리케이션 코드를 개선한 뒤 실패 케이스와 관련 회귀 케이스를 재실행한다.
+
+## 단독 실행 구현 및 검증 결과
+
+- [티켓팅 단독 실행 의존성과 검증 범위 (#1)](01-standalone-dependencies.md)
+- [이슈 #1 작업 및 실행 결과](results/issue-1.md)
+- [좌석 수동 검증용 Compose (#2)](../../test-infra/seat-hold/README.md)
+- [이슈 #2 구성 및 실행 결과](results/issue-2.md)
+- [공통 SQL과 실제 fixture ID (#3)](../../test-infra/seat-hold/sql/README.md)
+- [이슈 #3 스키마 및 fixture 검증 결과](results/issue-3.md)
+- [JWT·API 요청·관찰·reset 도구 (#4)](../../test-infra/seat-hold/tools/README.md)
+- [이슈 #4 도구 검증 결과](results/issue-4.md)
+- [이슈 #5 수동 절차 준비 결과](results/issue-5.md)
+- [Testcontainers 자동 회귀 실행 방법 (#6)](06-testcontainers.md)
+- [이슈 #6 실제 자동 회귀 결과](results/issue-6.md)
+
+이슈 #1~#4의 독립 환경·공통 SQL·도구 검증과 #6 자동 회귀 결과는 각 결과 문서에서 확인한다.
+#5 사용자 수동 smoke는 아직 NOT_RUN이며 자동 테스트 결과로 대체하지 않는다.
+자동화한 케이스 이외의 전체 설계 시나리오도 실행 완료로 간주하지 않는다.

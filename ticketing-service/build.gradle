@@ -2,6 +2,12 @@ plugins {
     id 'org.springframework.boot'
 }
 
+dependencyManagement {
+    imports {
+        mavenBom 'org.testcontainers:testcontainers-bom:1.21.3'
+    }
+}
+
 dependencies {
     implementation project(':shared-kernel')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -16,4 +22,34 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'io.opentelemetry:opentelemetry-exporter-otlp'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-aop'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+}
+
+// Single source of truth shared with Compose; no copied fixture under src/test.
+tasks.named('processTestResources') {
+    from(rootProject.file('test-infra/seat-hold')) {
+        include 'sql/*.sql'
+        into 'seat-test'
+    }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform { excludeTags 'seat-integration' }
+}
+
+tasks.register('seatIntegrationTest', Test) {
+    description = 'Actual Redis/PostgreSQL regression, including strict known-defect assertions and 5-minute TTL.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform { includeTags 'seat-integration' }
+    maxParallelForks = 1
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    testLogging { events 'passed', 'failed', 'skipped' }
+    // Do not ignore failures: TC-19/20 must keep the regression gate red until fixed.
+    systemProperty 'api.version', '1.44'
 }

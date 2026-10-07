@@ -1,5 +1,7 @@
 package com.example.SKALA_Mini_Project_1.modules.reconciliation.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import com.example.SKALA_Mini_Project_1.modules.reconciliation.repository.Reconc
 import lombok.RequiredArgsConstructor;
 
 @Component
+@ConditionalOnProperty(name = "ticketing.reconciliation.scheduling.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class ReconciliationMonitorScheduler {
 
