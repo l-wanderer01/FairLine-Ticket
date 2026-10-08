@@ -1,0 +1,6 @@
+repeat,scenario,clients,seconds,requests,held,conflicts,limits,errors,rps,mean_ms,p95_ms,p99_ms,lock_sql_mean_ms,lock_sql_p95_ms,scope_insert_mean_ms,pool_acquire_mean_ms,avg_lock_waiters,max_lock_waiters,lock_active_sample_pct,avg_blocker_edges,db_cpu_one_core_pct,db_cpu_two_core_pct,db_cpu_peak_one_core_pct,cpu_throttled_ms,observer_samples
+1,shared_schedule,1,2.001,936,936,0,0,0,467.7,2.131,4.558,8.426,0.187,0.347,0.264,0.003,0.000,0,0.00,0.000,35.17,17.58,37.98,0.000,89
+1,shared_schedule,8,2.011,1015,1015,0,0,0,504.8,15.782,26.856,42.876,12.950,23.225,0.423,0.016,6.330,7,91.01,18.193,48.18,24.09,53.58,0.000,88
+1,shared_schedule,32,2.037,1083,1083,0,0,0,531.7,59.265,93.463,111.671,56.396,89.315,0.472,0.098,29.747,31,98.04,435.835,58.71,29.36,65.16,0.000,91
+1,spread_schedules,32,2.029,2289,2289,0,0,0,1128.3,28.121,74.236,122.829,3.497,11.560,3.805,0.005,0.000,0,0.00,0.000,62.38,31.19,83.20,0.000,44
+1,same_seat,32,2.037,1266,1,1265,0,0,621.6,50.833,101.850,155.478,48.492,98.266,0.384,0.050,29.989,31,98.02,440.831,53.83,26.91,57.61,0.000,89

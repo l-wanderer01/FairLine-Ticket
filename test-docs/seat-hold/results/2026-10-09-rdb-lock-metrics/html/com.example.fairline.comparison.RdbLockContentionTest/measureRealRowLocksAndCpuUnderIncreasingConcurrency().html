@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - measureRealRowLocksAndCpuUnderIncreasingConcurrency()</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<div class="breadcrumbs">
+<a class="breadcrumb" href="../index.html">all</a> &gt; 
+<a class="breadcrumb" href="index.html">com.example.fairline.comparison.RdbLockContentionTest</a> &gt; 
+<span class="breadcrumb">measureRealRowLocksAndCpuUnderIncreasingConcurrency()</span>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a class="successGroup" href="#">Gradle Test Run :storage-comparison:rdbLockContention</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Gradle Test Run :storage-comparison:rdbLockContention</h2>
+<h1>measureRealRowLocksAndCpuUnderIncreasingConcurrency()</h1>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a class="" href="#">summary</a>
+</li>
+<li>
+<a class="" href="#">standard output</a>
+</li>
+</ul>
+<div class="tab">
+<h2>summary</h2>
+<div>
+<div class="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox">
+<div class="counter">0</div>
+<p>skipped</p>
+</div>
+</td>
+<td>
+<div class="infoBox duration">
+<div class="counter">5m13.06s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="tab">
+<h2>standard output</h2>
+<span class="code">
+<pre id="root-0-test-stdout-measureRealRowLocksAndCpuUnderIncreasingConcurrency()">19:44:58.632 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Starting...
+19:44:58.920 [Test worker] INFO com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7383eae2
+19:44:58.921 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Start completed.
+19:44:58.923 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-2 - Starting...
+19:44:58.972 [Test worker] INFO com.zaxxer.hikari.pool.HikariPool -- HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@132ddbab
+19:44:58.972 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-2 - Start completed.
+1,shared_schedule,1,20.008,12313,12313,0,0,0,615.4,1.622,3.555,6.385,0.154,0.278,0.209,0.001,0.000,0,0.00,0.000,40.83,20.42,45.97,0.000,899
+1,shared_schedule,8,20.009,13487,13487,0,0,0,674.0,11.861,21.514,31.841,9.841,18.428,0.289,0.001,6.510,7,91.32,18.847,56.89,28.44,62.33,0.000,898
+1,shared_schedule,32,20.036,13291,13291,0,0,0,663.3,48.156,74.630,99.813,46.075,71.762,0.318,0.012,30.450,31,98.03,448.800,59.46,29.73,67.28,0.000,893
+1,spread_schedules,32,20.040,29440,29440,0,0,0,1469.1,21.763,55.708,81.269,2.830,7.814,2.920,0.001,0.006,3,0.04,0.006,95.19,47.60,105.05,0.000,493
+1,same_seat,32,20.048,14204,1,14203,0,0,708.5,45.090,74.736,95.102,43.163,71.799,0.284,0.001,30.458,31,98.10,448.289,58.75,29.37,62.42,0.000,900
+2,same_seat,32,20.060,13584,1,13583,0,0,677.2,47.189,76.404,120.585,45.173,73.781,0.298,0.011,30.509,31,98.11,450.304,56.07,28.04,60.75,0.000,898
+2,spread_schedules,32,20.012,29784,29784,0,0,0,1488.3,21.485,55.858,83.730,2.895,8.403,2.880,0.002,0.024,7,0.14,0.046,91.26,45.63,110.44,0.000,456
+2,shared_schedule,32,20.050,13779,13779,0,0,0,687.2,46.486,74.785,92.487,44.534,71.726,0.279,0.005,30.512,31,98.06,450.125,59.64,29.82,61.35,0.000,904
+2,shared_schedule,8,20.018,14596,14596,0,0,0,729.1,10.966,18.967,24.719,9.108,16.331,0.263,0.001,6.551,7,91.51,19.015,58.66,29.33,71.27,0.000,908
+2,shared_schedule,1,20.001,14206,14206,0,0,0,710.3,1.407,2.778,5.114,0.137,0.243,0.189,0.000,0.000,0,0.00,0.000,44.09,22.04,49.18,0.000,922
+3,shared_schedule,1,20.001,14606,14606,0,0,0,730.3,1.369,2.675,5.155,0.136,0.227,0.182,0.000,0.000,0,0.00,0.000,42.98,21.49,49.76,0.000,914
+3,shared_schedule,8,20.010,14381,14381,0,0,0,718.7,11.127,19.533,26.181,9.253,16.660,0.269,0.001,6.550,7,91.75,18.965,58.02,29.01,62.73,0.000,908
+3,shared_schedule,32,20.045,13113,13113,0,0,0,654.2,48.840,89.580,132.650,46.774,85.796,0.299,0.012,30.474,31,98.12,449.796,58.62,29.31,62.40,0.000,893
+3,spread_schedules,32,20.016,31396,31396,0,0,0,1568.5,20.387,53.889,76.092,2.727,7.675,2.647,0.002,0.000,0,0.00,0.000,93.15,46.57,111.83,0.000,492
+3,same_seat,32,20.035,14603,1,14602,0,0,728.9,43.849,68.923,83.157,41.971,66.113,0.284,0.001,30.478,32,98.18,449.150,57.06,28.53,62.18,0.000,905
+19:50:11.493 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-2 - Shutdown initiated...
+19:50:11.512 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-2 - Shutdown completed.
+19:50:11.513 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Shutdown initiated...
+19:50:11.516 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Shutdown completed.
+</pre>
+<button class="clipboard-copy-btn" aria-label="Copy to clipboard" data-copy-element-id="root-0-test-stdout-measureRealRowLocksAndCpuUnderIncreasingConcurrency()">Copy</button>
+</span>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 9.3.0</a> at Oct 8, 2026, 7:50:12 PM</p>
+</div>
+</div>
+</body>
+</html>

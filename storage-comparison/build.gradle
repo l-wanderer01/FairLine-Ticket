@@ -7,7 +7,10 @@ dependencies {
     testImplementation project(':shared-kernel')
 }
 
-test { exclude '**/StorageComparisonTest.class' }
+test {
+    exclude '**/StorageComparisonTest.class'
+    exclude '**/RdbLockContentionTest.class'
+}
 
 tasks.register('storageComparison', Test) {
     testClassesDirs = sourceSets.test.output.classesDirs
@@ -18,6 +21,21 @@ tasks.register('storageComparison', Test) {
     environment 'COMPARISON_DB_URL', System.getenv('COMPARISON_DB_URL') ?: 'jdbc:postgresql://localhost:15432/comparison'
     environment 'COMPARISON_DB_USER', System.getenv('COMPARISON_DB_USER') ?: 'comparison'
     environment 'COMPARISON_DB_PASSWORD', System.getenv('COMPARISON_DB_PASSWORD') ?: 'comparison'
+    outputs.upToDateWhen { false }
+    testLogging { events 'passed', 'failed'; showStandardStreams = true }
+}
+
+tasks.register('rdbLockContention', Test) {
+    description = 'Measure actual PostgreSQL row-lock contention, latency and container CPU.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    include '**/RdbLockContentionTest.class'
+    environment 'RDB_METRICS_DB_URL', System.getenv('RDB_METRICS_DB_URL') ?: 'jdbc:postgresql://localhost:25432/lock_metrics'
+    environment 'RDB_METRICS_DB_USER', System.getenv('RDB_METRICS_DB_USER') ?: 'comparison'
+    environment 'RDB_METRICS_DB_PASSWORD', System.getenv('RDB_METRICS_DB_PASSWORD') ?: 'comparison'
+    environment 'RDB_METRICS_CONTAINER', System.getenv('RDB_METRICS_CONTAINER') ?: 'fairline-lock-metrics-postgres-1'
+    environment 'RDB_METRICS_SECONDS', System.getenv('RDB_METRICS_SECONDS') ?: '20'
+    environment 'RDB_METRICS_REPEATS', System.getenv('RDB_METRICS_REPEATS') ?: '3'
     outputs.upToDateWhen { false }
     testLogging { events 'passed', 'failed'; showStandardStreams = true }
 }

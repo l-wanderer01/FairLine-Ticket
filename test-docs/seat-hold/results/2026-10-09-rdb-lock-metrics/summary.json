@@ -1,0 +1,101 @@
+{
+  "medians": [
+    {
+      "scenario": "shared_schedule",
+      "clients": 1,
+      "rps": 710.3,
+      "mean_ms": 1.407,
+      "p95_ms": 2.778,
+      "p99_ms": 5.155,
+      "lock_sql_mean_ms": 0.137,
+      "lock_sql_p95_ms": 0.243,
+      "pool_acquire_mean_ms": 0.0,
+      "avg_lock_waiters": 0.0,
+      "lock_active_sample_pct": 0.0,
+      "db_cpu_one_core_pct": 42.98,
+      "db_cpu_two_core_pct": 21.49,
+      "max_lock_waiters": 0
+    },
+    {
+      "scenario": "shared_schedule",
+      "clients": 8,
+      "rps": 718.7,
+      "mean_ms": 11.127,
+      "p95_ms": 19.533,
+      "p99_ms": 26.181,
+      "lock_sql_mean_ms": 9.253,
+      "lock_sql_p95_ms": 16.66,
+      "pool_acquire_mean_ms": 0.001,
+      "avg_lock_waiters": 6.55,
+      "lock_active_sample_pct": 91.51,
+      "db_cpu_one_core_pct": 58.02,
+      "db_cpu_two_core_pct": 29.01,
+      "max_lock_waiters": 7
+    },
+    {
+      "scenario": "shared_schedule",
+      "clients": 32,
+      "rps": 663.3,
+      "mean_ms": 48.156,
+      "p95_ms": 74.785,
+      "p99_ms": 99.813,
+      "lock_sql_mean_ms": 46.075,
+      "lock_sql_p95_ms": 71.762,
+      "pool_acquire_mean_ms": 0.012,
+      "avg_lock_waiters": 30.474,
+      "lock_active_sample_pct": 98.06,
+      "db_cpu_one_core_pct": 59.46,
+      "db_cpu_two_core_pct": 29.73,
+      "max_lock_waiters": 31
+    },
+    {
+      "scenario": "spread_schedules",
+      "clients": 32,
+      "rps": 1488.3,
+      "mean_ms": 21.485,
+      "p95_ms": 55.708,
+      "p99_ms": 81.269,
+      "lock_sql_mean_ms": 2.83,
+      "lock_sql_p95_ms": 7.814,
+      "pool_acquire_mean_ms": 0.002,
+      "avg_lock_waiters": 0.006,
+      "lock_active_sample_pct": 0.04,
+      "db_cpu_one_core_pct": 93.15,
+      "db_cpu_two_core_pct": 46.57,
+      "max_lock_waiters": 7
+    },
+    {
+      "scenario": "same_seat",
+      "clients": 32,
+      "rps": 708.5,
+      "mean_ms": 45.09,
+      "p95_ms": 74.736,
+      "p99_ms": 95.102,
+      "lock_sql_mean_ms": 43.163,
+      "lock_sql_p95_ms": 71.799,
+      "pool_acquire_mean_ms": 0.001,
+      "avg_lock_waiters": 30.478,
+      "lock_active_sample_pct": 98.11,
+      "db_cpu_one_core_pct": 57.06,
+      "db_cpu_two_core_pct": 28.53,
+      "max_lock_waiters": 32
+    }
+  ],
+  "claims": {
+    "response_ratio": 34.22601279317697,
+    "lock_query_ratio": 336.3138686131387,
+    "rps_ratio": 0.9338307757285654,
+    "cpu_ratio": 1.3834341554211262,
+    "spread_rps_ratio": 2.243781094527363,
+    "total_requests": 256783,
+    "total_held": 214395,
+    "total_conflicts": 42388
+  },
+  "junit": {
+    "tests": "1",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "313.077"
+  }
+}

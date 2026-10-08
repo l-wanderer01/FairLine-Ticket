@@ -1,0 +1,16 @@
+name: fairline-lock-metrics
+services:
+  postgres:
+    image: postgres:17-alpine
+    cpus: 2.0
+    mem_limit: 2g
+    environment:
+      POSTGRES_DB: lock_metrics
+      POSTGRES_USER: comparison
+      POSTGRES_PASSWORD: comparison
+    ports: ['127.0.0.1:25432:5432']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U comparison -d lock_metrics']
+      interval: 1s
+      timeout: 3s
+      retries: 30

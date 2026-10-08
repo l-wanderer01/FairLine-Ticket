@@ -1,0 +1,6 @@
+PostgreSQL 17.11 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+fsync=on
+synchronous_commit=on
+load_pool_max=32
+observer_pool_max=1
+observer_period_ms=20

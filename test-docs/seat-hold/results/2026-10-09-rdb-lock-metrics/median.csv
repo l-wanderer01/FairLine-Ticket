@@ -1,0 +1,6 @@
+scenario,clients,rps,mean_ms,p95_ms,p99_ms,lock_sql_mean_ms,lock_sql_p95_ms,pool_acquire_mean_ms,avg_lock_waiters,lock_active_sample_pct,db_cpu_one_core_pct,db_cpu_two_core_pct,max_lock_waiters
+shared_schedule,1,710.3,1.407,2.778,5.155,0.137,0.243,0.0,0.0,0.0,42.98,21.49,0
+shared_schedule,8,718.7,11.127,19.533,26.181,9.253,16.66,0.001,6.55,91.51,58.02,29.01,7
+shared_schedule,32,663.3,48.156,74.785,99.813,46.075,71.762,0.012,30.474,98.06,59.46,29.73,31
+spread_schedules,32,1488.3,21.485,55.708,81.269,2.83,7.814,0.002,0.006,0.04,93.15,46.57,7
+same_seat,32,708.5,45.09,74.736,95.102,43.163,71.799,0.001,30.478,98.11,57.06,28.53,32
